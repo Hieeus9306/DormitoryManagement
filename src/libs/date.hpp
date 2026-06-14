@@ -92,20 +92,22 @@ class Date {
     constexpr size_t year() const noexcept { return _year; }
     constexpr size_t month() const noexcept { return _month; }
     constexpr size_t day() const noexcept { return _day; }
+
+    // Get current date
+    static Date today() {
+        std::time_t now = std::time(nullptr);
+        std::tm     localTime{};
+
+    #ifdef _WIN32
+        localtime_s(&localTime, &now);
+    #else
+        localtime_r(&now, &localTime);
+    #endif
+
+        return {static_cast<size_t>(localTime.tm_mday),
+                static_cast<size_t>(localTime.tm_mon + 1),
+                static_cast<size_t>(localTime.tm_year + 1900)};
+    }
 };
 
-Date today() {
-    std::time_t now = std::time(nullptr);
-    std::tm     localTime{};
-
-#ifdef _WIN32
-    localtime_s(&localTime, &now);
-#else
-    localtime_r(&now, &localTime);
-#endif
-
-    return {static_cast<size_t>(localTime.tm_mday),
-            static_cast<size_t>(localTime.tm_mon + 1),
-            static_cast<size_t>(localTime.tm_year + 1900)};
-}
 } // namespace base
