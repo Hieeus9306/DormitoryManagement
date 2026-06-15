@@ -6,7 +6,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <iostream>
 
 /*
 ─────────────────────────────────────────────────────────────────────────────
@@ -160,7 +159,6 @@ void loadContracts() {
         contract.startDate = base::Date(record[3]);
         contract.endDate   = base::Date(record[4]);
         contract.isActive  = (record[5] == "true");
-        std::cout << contract.isActive << "\n";
 
         contractsList.push_back(contract);
     }

@@ -67,10 +67,18 @@ base::Vector<ServiceInvoice> serviceInvoicesList;
 Data files
 ────────────────────────────────────────────────────────────────────────────────
 */
-constexpr std::string_view STUDENTS_FILES = "../data/Students.txt";
-constexpr std::string_view ROOMS_FILE     = "../data/Rooms.txt";
-constexpr std::string_view CONTRACTS_FILE = "../data/Contracts.txt";
-constexpr std::string_view BILLS_FILE     = "../data/ServiceInvoices.txt";
+#ifndef DATA_DIR_PATH
+#define DATA_DIR_PATH "../data"
+#endif
+
+constexpr std::string_view STUDENTS_FILES =
+    DATA_DIR_PATH "/Students.txt";
+constexpr std::string_view ROOMS_FILE =
+    DATA_DIR_PATH "/Rooms.txt";
+constexpr std::string_view CONTRACTS_FILE =
+    DATA_DIR_PATH "/Contracts.txt";
+constexpr std::string_view BILLS_FILE =
+    DATA_DIR_PATH "/ServiceInvoices.txt";
 
 /*
 ────────────────────────────────────────────────────────────────────────────────

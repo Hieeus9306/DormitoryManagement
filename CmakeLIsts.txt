@@ -21,6 +21,7 @@ FetchContent_MakeAvailable(ftxui)
 
 add_executable(dormitory
     main.cpp
+    src/ui.cpp
 )
 
 target_link_libraries(dormitory PRIVATE ftxui::screen ftxui::dom ftxui::component)
