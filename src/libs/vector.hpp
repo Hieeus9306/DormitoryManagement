@@ -62,7 +62,7 @@ template <class Type> class Vector {
             _size = other.size();
             _cap  = other.capacity();
 
-            _data = alloc_traits::allocate(_alloc, _cap);
+            _data = alloc_traits::allocate(_alloc,_cap);
             for (size_t i = 0; i < _size; i++) {
                 alloc_traits::construct(_alloc, _data + i, other[i]);
             }
@@ -138,6 +138,12 @@ template <class Type> class Vector {
     }
 
     // Append value
+    constexpr void push_back(const Type& value) {
+        if (_size == _cap) {
+            reserve(2 * _cap);
+        }
+        alloc_traits::construct(_alloc, _data + _size++, value);
+    }
     constexpr void insert(size_t index, const Type& value) {
         if (index > _size) {
             return;
@@ -157,13 +163,6 @@ template <class Type> class Vector {
         }
         _data[index] = value;
         _size++;
-    }
-    constexpr void push_front(const Type& value) { insert(0, value); }
-    constexpr void push_back(const Type& value) {
-        if (_size == _cap) {
-            reserve(2 * _cap);
-        }
-        alloc_traits::construct(_alloc, _data + _size++, value);
     }
 
     // Remove element
