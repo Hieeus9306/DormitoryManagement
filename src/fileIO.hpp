@@ -6,7 +6,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <iostream>
 
 /*
 ─────────────────────────────────────────────────────────────────────────────
@@ -94,7 +93,7 @@ void loadRooms() {
         Room room;
 
         room.id    = record[0];
-        room.type  = std::stoll(record[1]);
+        room.type  = std::stoull(record[1]);
         room.price = std::stod(record[2]);
 
         std::stringstream ss(record[3]);
@@ -160,7 +159,6 @@ void loadContracts() {
         contract.startDate = base::Date(record[3]);
         contract.endDate   = base::Date(record[4]);
         contract.isActive  = (record[5] == "true");
-        std::cout << contract.isActive << "\n";
 
         contractsList.push_back(contract);
     }
@@ -207,8 +205,8 @@ void loadServiceInvoices() {
 
         invoice.id                  = record[0];
         invoice.roomId              = record[1];
-        invoice.month               = std::stoll(record[2]);
-        invoice.year                = std::stoll(record[3]);
+        invoice.month               = std::stoull(record[2]);
+        invoice.year                = std::stoull(record[3]);
         invoice.oldElectricityIndex = std::stod(record[4]);
         invoice.newElectricityIndex = std::stod(record[5]);
         invoice.oldWaterIndex       = std::stod(record[6]);
