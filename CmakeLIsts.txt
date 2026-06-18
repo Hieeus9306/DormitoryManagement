@@ -21,6 +21,13 @@ FetchContent_MakeAvailable(ftxui)
 
 add_executable(dormitory
     main.cpp
+    src/fileIo.cpp
+    
+    src/inputProcess/student.cpp
+    src/inputProcess/room.cpp
+    src/inputProcess/contract.cpp
+    src/inputProcess/invoice.cpp
+    src/inputProcess/report.cpp
 )
 
 target_link_libraries(dormitory PRIVATE ftxui::screen ftxui::dom ftxui::component)

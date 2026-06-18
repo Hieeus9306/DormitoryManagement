@@ -1,14 +1,10 @@
-#pragma once
+#include "report.hpp"
 
 #include "config.hpp"
 #include "libs/date.hpp"
 #include "libs/vector.hpp"
 
-/**
- * @brief  Finds service invoices that are overdue by at least one month.
- * @return A vector of pointers to overdue ServiceInvoice objects in
- * ServiceInvoicesList.
- */
+
 base::Vector<ServiceInvoice*> findOverdueInvoices() {
     base::Date currentDate = base::Date::today();
 
@@ -27,21 +23,6 @@ base::Vector<ServiceInvoice*> findOverdueInvoices() {
     return reportList;
 }
 
-/**
- * @struct OccupancyStatus
- * @brief  Represents the occupancy status of the dormitory.
- */
-struct OccupancyStatus {
-    size_t rentedRooms;
-    size_t emptyRooms;
-    double occupancyRate;
-};
-
-/**
- * @brief  Calculates the occupancy status of the dormitory.
- * @return An OccupancyStatus struct containing rented rooms, empty rooms, and
- * occupancy rate.
- */
 OccupancyStatus occupancyReport() {
     OccupancyStatus report     = {0, 0, 0.0};
     size_t          totalRooms = roomsList.size();
@@ -62,10 +43,6 @@ OccupancyStatus occupancyReport() {
     return report;
 }
 
-/**
- * @brief  Finds contracts that are expiring within the next month.
- * @return A vector of pointers to expiring Contract objects in ContractsList.
- */
 base::Vector<Contract*> findExpiringContracts() {
     base::Date currentDate = base::Date::today();
 
@@ -84,3 +61,4 @@ base::Vector<Contract*> findExpiringContracts() {
     }
     return reportList;
 }
+

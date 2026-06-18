@@ -1,7 +1,7 @@
 #pragma once
 
 #include "config.hpp"
-#include "libs/algorithms.hpp"
+#include <string>
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
@@ -13,14 +13,24 @@ Find student
  * @param  studentId: id of student to find
  * @return lower bound index of student in studentsList
  */
-size_t findStudent(const std::string& studentId) {
-    auto it = binarySearch(studentsList, studentId,
-                           [](const Student& student, const std::string& id) {
-                               return student.id < id;
-                           });
+size_t findStudent(const std::string& studentId);
 
-    return it - studentsList.begin();
-}
+/*
+────────────────────────────────────────────────────────────────────────────────
+Check logic for student management
+────────────────────────────────────────────────────────────────────────────────
+*/
+/// @brief  check if a student exists in the studentsList
+bool isStudentExist(const std::string& studentId);
+
+/// @brief  check if a student can be added
+bool canAddStudent(const Student& newStudent, std::string& message);
+
+/// @brief  check if student can be updated
+bool canUpdateStudent(const std::string& studentId, std::string& message);
+
+/// @brief  check if student can be removed
+bool canRemoveStudent(const std::string& studentId, std::string& message);
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
@@ -31,29 +41,13 @@ Student management
  * @brief  add student to the studentsList
  * @param  newStudent: student to add
  */
-void addStudent(const Student& newStudent) {
-    auto idx = findStudent(newStudent.id);
-
-    if (idx != studentsList.size() && studentsList[idx].id == newStudent.id) {
-        return;
-    }
-
-    studentsList.insert(idx, newStudent);
-}
+void addStudent(const Student& newStudent);
 
 /**
  * @brief  remove student from the studentsList
  * @param  studentId: id of student to remove
  */
-void removeStudent(const std::string& studentId) {
-    size_t idx = findStudent(studentId);
-
-    if (idx == studentsList.size() || studentsList[idx].id != studentId) {
-        return;
-    }
-
-    studentsList.erase_at(idx);
-}
+void removeStudent(const std::string& studentId);
 
 /**
  * @brief  update student information
@@ -65,16 +59,4 @@ void removeStudent(const std::string& studentId) {
  */
 void updateStudent(const std::string& studentId, std::string newClass,
                    bool newIsPriority, std::string newPhone,
-                   std::string newEmail) {
-    size_t idx = findStudent(studentId);
-
-    if (idx == studentsList.size() || studentsList[idx].id != studentId) {
-        return;
-    }
-
-    Student& student     = studentsList[idx];
-    student.studentClass = newClass;
-    student.isPriority   = newIsPriority;
-    student.phone        = newPhone;
-    student.email        = newEmail;
-}
+                   std::string newEmail);

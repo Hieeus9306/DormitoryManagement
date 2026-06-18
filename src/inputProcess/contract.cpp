@@ -1,4 +1,4 @@
-#pragma once
+#include "contract.hpp"
 
 #include "config.hpp"
 #include "libs/algorithms.hpp"
@@ -37,11 +37,6 @@ std::string generateContractId() {
 Find contract
 ────────────────────────────────────────────────────────────────────────────────
 */
-/**
- * @brief  find contract by contractId
- * @param  contractId: id of contract to find
- * @return lower bound of contractId in contractsList
- */
 size_t findContract(const std::string& contractId) {
     auto it = binarySearch(contractsList, contractId,
                            [](const Contract& contract, const std::string& id) {
@@ -51,11 +46,6 @@ size_t findContract(const std::string& contractId) {
     return it - contractsList.begin();
 }
 
-/**
- * @brief  find active contract of a student
- * @param  studentId: id of student to find
- * @return index of contract if found, contractsList.size() otherwise
- */
 size_t findActiveContractOfStudent(const std::string& studentId) {
     for (auto& contract : contractsList) {
         if (contract.studentId == studentId && contract.isActive == true) {
@@ -67,30 +57,128 @@ size_t findActiveContractOfStudent(const std::string& studentId) {
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
-Contract management
+Check logic of contract mangagement
 ────────────────────────────────────────────────────────────────────────────────
 */
-/**
- * @brief  add new contract to contractsList
- * @param  studentId    : id of student associated with the contract
- * @param  roomId       : id of room associated with the contract
- * @param  startDate    : start date of the contract
- * @param  endDate      : end date of the contract
- */
-void addContract(const std::string& studentId, const std::string& roomId,
-                 const base::Date& startDate, const base::Date& endDate) {
+bool isContractExist(const std::string& contractId) {
+    size_t idx = findContract(contractId);
+    return (idx != contractsList.size() && contractsList[idx].id == contractId);
+}
+
+bool isActiveContractExist(const std::string& studentId) {
+    size_t idx = findActiveContractOfStudent(studentId);
+    return (idx != contractsList.size());
+}
+
+bool isValidContractRange(const base::Date& startDate,
+                          const base::Date& endDate) {
+    return (startDate < endDate);
+}
+
+bool canExtendContract(const std::string& contractId,
+                       const base::Date&  newEndDate) {
+    if (!isContractExist(contractId)) {
+        return false;
+    }
+    size_t idx = findContract(contractId);
+    if (contractsList[idx].isActive == false) {
+        return false;
+    }
+    if (contractsList[idx].endDate >= newEndDate) {
+        return false;
+    }
+
+    return true;
+}
+
+bool canRegisterRoom(const std::string& studentId, const std::string& roomId,
+                     const base::Date& startDate, const base::Date& endDate,
+                     std::string& message) {
     size_t contractIdx = findActiveContractOfStudent(studentId);
     if (contractIdx != contractsList.size()) {
-        return;
+        message = "Student already has an active contract.";
+        return false;
     }
 
     size_t roomIdx = findRoom(roomId);
     if (roomIdx == roomsList.size() || roomsList[roomIdx].id != roomId) {
-        return;
+        message = "Room not found.";
+        return false;
     }
+    if (roomsList[roomIdx].hasAvailableSlot() == false) {
+        message = "Room has no available slot.";
+        return false;
+    }
+
     if (startDate >= endDate) {
-        return;
+        message = "Invalid date range.";
+        return false;
     }
+    return true;
+}
+
+bool canCheckoutRoom(const std::string& studentId, std::string& message) {
+    size_t idx = findActiveContractOfStudent(studentId);
+
+    if (idx == contractsList.size()) {
+        message = "No active contract found for the student.";
+        return false;
+    }
+    if (contractsList[idx].isActive == false) {
+        message = "The contract is already inactive.";
+        return false;
+    }
+
+    return true;
+}
+
+bool canTransferRoom(const std::string& studentId, const std::string& newRoomId,
+                     const base::Date& newStartDate,
+                     const base::Date& newEndDate, std::string& message) {
+    size_t oldContractIdx = findActiveContractOfStudent(studentId);
+    if (oldContractIdx == contractsList.size()) {
+        message = "No active contract found for the student.";
+        return false;
+    }
+    std::string oldRoomId     = contractsList[oldContractIdx].roomId;
+    std::string oldContractId = contractsList[oldContractIdx].id;
+
+    if (oldRoomId == newRoomId) {
+        message = "The student is already in the specified room.";
+        return false;
+    }
+    if (contractsList[oldContractIdx].isActive == false) {
+        message = "The contract is already inactive.";
+        return false;
+    }
+
+    size_t newRoomIdx = findRoom(newRoomId);
+    if (newRoomIdx == roomsList.size() ||
+        roomsList[newRoomIdx].id != newRoomId) {
+        message = "New room not found.";
+        return false;
+    }
+    if (roomsList[newRoomIdx].hasAvailableSlot() == false) {
+        message = "New room has no available slot.";
+        return false;
+    }
+
+    if (newStartDate >= newEndDate) {
+        message = "Invalid date range.";
+        return false;
+    }
+
+    return true;
+}
+
+/*
+────────────────────────────────────────────────────────────────────────────────
+Contract management
+────────────────────────────────────────────────────────────────────────────────
+*/
+void addContract(const std::string& studentId, const std::string& roomId,
+                 const base::Date& startDate, const base::Date& endDate) {
+    size_t contractIdx = findActiveContractOfStudent(studentId);
 
     Contract newContract;
 
@@ -104,59 +192,15 @@ void addContract(const std::string& studentId, const std::string& roomId,
     contractsList.push_back(newContract);
 }
 
-/**
- * @brief  remove contract from contractsList
- * @param  contractId: id of contract to remove
- */
-void removeContract(const std::string& contractId) {
-    size_t idx = findContract(contractId);
-
-    if (idx == contractsList.size() || contractsList[idx].id != contractId) {
-        return;
-    }
-    if (contractsList[idx].isActive == true) {
-        return;
-    }
-
-    contractsList.erase_at(idx);
-}
-
-/**
- * @brief  extend end date of a contract
- * @param  contractId: id of contract to extend
- * @param  newEndDate: new end date of the contract
- */
 void extendContract(const std::string& contractId,
                     const base::Date&  newEndDate) {
     size_t idx = findContract(contractId);
 
-    if (idx == contractsList.size() || contractsList[idx].id != contractId) {
-        return;
-    }
-    if (contractsList[idx].isActive == false) {
-
-        return;
-    }
-    if (contractsList[idx].endDate >= newEndDate) {
-        return;
-    }
-
     contractsList[idx].endDate = newEndDate;
 }
 
-/**
- * @brief  terminate a contract
- * @param  contractId: id of contract to terminate
- */
 void terminateContract(const std::string& contractId) {
     size_t idx = findContract(contractId);
-
-    if (idx == contractsList.size() || contractsList[idx].id != contractId) {
-        return;
-    }
-    if (contractsList[idx].isActive == false) {
-        return;
-    }
 
     contractsList[idx].isActive = false;
 }
@@ -166,92 +210,32 @@ void terminateContract(const std::string& contractId) {
 Room assignment management
 ────────────────────────────────────────────────────────────────────────────────
 */
-/**
- * @brief  assign student to a room
- * @param  studentId    : id of student to assign
- * @param  roomId       : id of room to assign student to
- * @param  startDate    : start date of the assignment
- * @param  endDate      : end date of the assignment
- */
 void registerRoom(const std::string& studentId, const std::string& roomId,
                   const base::Date& startDate, const base::Date& endDate) {
     size_t contractIdx = findActiveContractOfStudent(studentId);
-    if (contractIdx != contractsList.size()) {
-        return;
-    }
-
-    size_t roomIdx = findRoom(roomId);
-    if (roomIdx == roomsList.size() || roomsList[roomIdx].id != roomId) {
-        return;
-    }
-    if (roomsList[roomIdx].hasAvailableSlot() == false) {
-        return;
-    }
-
-    if (startDate >= endDate) {
-        return;
-    }
+    size_t roomIdx     = findRoom(roomId);
 
     addStudentToRoom(roomId, studentId);
     addContract(studentId, roomId, startDate, endDate);
 }
 
-/**
- * @brief  transfer student to a different room
- * @param  studentId    : id of student to transfer
- * @param  newRoomId    : id of new room to transfer student to
- * @param  newStartDate : start date of the new contract
- * @param  newEndDate   : end date of the new contract
- */
 void transferRoom(const std::string& studentId, const std::string& newRoomId,
                   const base::Date& newStartDate,
                   const base::Date& newEndDate) {
 
-    size_t oldContractIdx = findActiveContractOfStudent(studentId);
-    if (oldContractIdx == contractsList.size()) {
-        return;
-    }
-    std::string oldRoomId     = contractsList[oldContractIdx].roomId;
-    std::string oldContractId = contractsList[oldContractIdx].id;
-
-    if (oldRoomId == newRoomId) {
-        return;
-    }
-    if (contractsList[oldContractIdx].isActive == false) {
-        return;
-    }
+    size_t      oldContractIdx = findActiveContractOfStudent(studentId);
+    std::string oldRoomId      = contractsList[oldContractIdx].roomId;
+    std::string oldContractId  = contractsList[oldContractIdx].id;
 
     size_t newRoomIdx = findRoom(newRoomId);
-    if (newRoomIdx == roomsList.size() ||
-        roomsList[newRoomIdx].id != newRoomId) {
-        return;
-    }
-    if (roomsList[newRoomIdx].hasAvailableSlot() == false) {
-        return;
-    }
-
-    if (newStartDate >= newEndDate) {
-        return;
-    }
 
     removeStudentFromRoom(oldRoomId, studentId);
     terminateContract(oldContractId);
     registerRoom(studentId, newRoomId, newStartDate, newEndDate);
 }
 
-/**
- * @brief  checkout student from a room
- * @param  studentId: id of student to checkout
- */
 void checkoutRoom(const std::string& studentId) {
     size_t idx = findActiveContractOfStudent(studentId);
-
-    if (idx == contractsList.size()) {
-        return;
-    }
-    if (contractsList[idx].isActive == false) {
-        return;
-    }
 
     std::string contractId = contractsList[idx].id;
     std::string roomId     = contractsList[idx].roomId;

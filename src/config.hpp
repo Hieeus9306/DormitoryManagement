@@ -52,6 +52,12 @@ struct ServiceInvoice {
     bool        isPaid;
 };
 
+struct OccupancyStatus {
+    size_t rentedRooms;
+    size_t emptyRooms;
+    double occupancyRate;
+};
+
 /*
 ────────────────────────────────────────────────────────────────────────────────
 Data lists
