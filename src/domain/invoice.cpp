@@ -1,10 +1,8 @@
 #include "domain/invoice.hpp"
-#include "domain/room.hpp"
 
 #include "core/config.hpp"
 #include "libs/algorithms.hpp"
 #include "state/state.hpp"
-
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
@@ -74,7 +72,7 @@ double waterFee(double oldIndex, double newIndex) {
 ────────────────────────────────────────────────────────────────────────────────
 Find service invoice
 ────────────────────────────────────────────────────────────────────────────────
- */
+*/
 size_t findInvoice(const std::string& invoiceId) {
     auto it =
         binarySearch(serviceInvoicesList, invoiceId,
@@ -107,68 +105,9 @@ size_t findLastInvoice(const std::string& roomId) {
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
-Check logic of invoice management
-────────────────────────────────────────────────────────────────────────────────
- */
-bool isInvoiceExist(const std::string& roomId, size_t month, size_t year) {
-    return findInvoice(roomId, month, year) != serviceInvoicesList.size();
-}
-bool isInvoiceExist(const std::string& invoiceId) {
-    size_t idx = findInvoice(invoiceId);
-    return (idx != serviceInvoicesList.size()) &&
-           (serviceInvoicesList[idx].id == invoiceId);
-}
-
-bool canCreateInvoice(const std::string& roomId, size_t month, size_t year,
-                      double electricity, double water, std::string& message) {
-
-    if (isInvoiceExist(roomId, month, year)) {
-        message = "Invoice already exists for this room and period.";
-        return false;
-    }
-
-    if (electricity <= 0 || water <= 0) {
-        message = "Invalid servise indices";
-        return false;
-    }
-    if (!isRoomExist(roomId)) {
-        message = "Room ID does not exist.";
-        return false;
-    }
-
-    const size_t lastInvoiceIdx = findLastInvoice(roomId);
-    if (lastInvoiceIdx == serviceInvoicesList.size()) {
-        return true;
-    }
-    const auto& lastInvoice = serviceInvoicesList[lastInvoiceIdx];
-    if (electricity < lastInvoice.newElectricityIndex ||
-        water < lastInvoice.newWaterIndex) {
-        message = "New indexes must be greater than or equal to the last "
-                  "invoice indexes.";
-        return false;
-    }
-
-    return true;
-}
-
-bool canUpdatePaymentStatus(const std::string& invoiceId,
-                            std::string&       message) {
-    if (invoiceId == "") {
-        message = "Invoice ID is required.";
-        return false;
-    }
-    if (isInvoiceExist(invoiceId)) {
-        message = "Invoice ID does not exist.";
-        return false;
-    }
-    return true;
-}
-
-/*
-────────────────────────────────────────────────────────────────────────────────
 Service invoice management
 ────────────────────────────────────────────────────────────────────────────────
- */
+*/
 void createInvoice(const std::string& roomId, size_t month, size_t year,
                    double newElectricityIndex, double newWaterIndex) {
     if (findInvoice(roomId, month, year) != serviceInvoicesList.size()) {

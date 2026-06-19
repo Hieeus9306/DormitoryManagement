@@ -29,7 +29,7 @@ using LambdaType = decltype(defaultCompare);
 Sorting
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 */
-std::mt19937 gen(std::random_device{}());
+inline std::mt19937 gen(std::random_device{}());
 
 template <typename Array, typename Compare = LambdaType>
 void sort(Array& data, size_t left, size_t right,
