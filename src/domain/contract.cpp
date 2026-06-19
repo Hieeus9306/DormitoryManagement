@@ -1,9 +1,8 @@
-#include "contract.hpp"
+#include "domain/contract.hpp"
 
-#include "config.hpp"
+#include "domain/room.hpp"
 #include "libs/algorithms.hpp"
-#include "room.hpp"
-#include <string>
+#include "state/state.hpp"
 
 /*
 ────────────────────────────────────────────────────────────────────────────────

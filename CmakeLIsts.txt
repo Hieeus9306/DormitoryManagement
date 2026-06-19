@@ -19,24 +19,34 @@ FetchContent_Declare(ftxui
 )
 FetchContent_MakeAvailable(ftxui)
 
+add_subdirectory(src)
+
 add_executable(dormitory
     main.cpp
-    src/fileIo.cpp
-    
-    src/inputProcess/student.cpp
-    src/inputProcess/room.cpp
-    src/inputProcess/contract.cpp
-    src/inputProcess/invoice.cpp
-    src/inputProcess/report.cpp
+    src/ui/ui.cpp
+    src/ui/table.cpp
+    src/ui/Dashboard.cpp
+    src/ui/events/common_events.cpp
+    src/ui/events/search_event.cpp
+    src/ui/events/action_event.cpp
+    src/ui/events/student_event.cpp
+    src/ui/events/room_event.cpp
+    src/ui/events/contract_event.cpp
+    src/ui/events/invoice_event.cpp
+    src/ui/events/report_event.cpp
 )
 
-target_link_libraries(dormitory PRIVATE ftxui::screen ftxui::dom ftxui::component)
+target_link_libraries(dormitory PRIVATE
+    dormitory_lib
+    ftxui::screen
+    ftxui::dom
+    ftxui::component
+)
 
 target_include_directories(dormitory PRIVATE
     ${CMAKE_SOURCE_DIR}/src
 )
 
-# output/dormitory.exe
 set_target_properties(dormitory PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/output
 )

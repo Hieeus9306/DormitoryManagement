@@ -1,9 +1,8 @@
-#include "student.hpp"
+#include "domain/student.hpp"
 
-#include "config.hpp"
 #include "libs/algorithms.hpp"
+#include "state/state.hpp"
 
-#include <string>
 
 /*
 ────────────────────────────────────────────────────────────────────────────────

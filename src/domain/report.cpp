@@ -1,10 +1,33 @@
-#include "report.hpp"
+#include "domain/report.hpp"
 
-#include "config.hpp"
-#include "libs/date.hpp"
-#include "libs/vector.hpp"
+#include "state/state.hpp"
 
+/*
+────────────────────────────────────────────────────────────────────────────────
+Date utilities
+────────────────────────────────────────────────────────────────────────────────
+*/
+std::time_t dateToTime(base::Date date) {
+    std::tm value{};
+    value.tm_mday  = static_cast<int>(date.day());
+    value.tm_mon   = static_cast<int>(date.month()) - 1;
+    value.tm_year  = static_cast<int>(date.year()) - 1900;
+    value.tm_isdst = -1;
+    return std::mktime(&value);
+}
 
+int daysBetween(base::Date startDate, base::Date endDate) {
+    constexpr int secondsPerDay = 60 * 60 * 24;
+    const double  seconds =
+        std::difftime(dateToTime(endDate), dateToTime(startDate));
+    return static_cast<int>(seconds / secondsPerDay);
+}
+
+/*
+────────────────────────────────────────────────────────────────────────────────
+Reports
+────────────────────────────────────────────────────────────────────────────────
+*/
 base::Vector<ServiceInvoice*> findOverdueInvoices() {
     base::Date currentDate = base::Date::today();
 
@@ -44,7 +67,8 @@ OccupancyStatus occupancyReport() {
 }
 
 base::Vector<Contract*> findExpiringContracts() {
-    base::Date currentDate = base::Date::today();
+    constexpr int expiringSoonDays = 30;
+    base::Date    currentDate      = base::Date::today();
 
     base::Vector<Contract*> reportList;
 
@@ -52,13 +76,11 @@ base::Vector<Contract*> findExpiringContracts() {
         if (!contract.isActive)
             continue;
 
-        int monthsDiff = (contract.endDate.year() - currentDate.year()) * 12 +
-                         (contract.endDate.month() - currentDate.month());
+        int daysLeft = daysBetween(currentDate, contract.endDate);
 
-        if (monthsDiff <= 1) {
+        if (daysLeft >= 0 && daysLeft < expiringSoonDays) {
             reportList.push_back(&contract);
         }
     }
     return reportList;
 }
-

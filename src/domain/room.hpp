@@ -1,8 +1,7 @@
 #pragma once
 
-#include "config.hpp"
+#include "core/types.hpp"
 #include <string>
-
 /*
 ────────────────────────────────────────────────────────────────────────────────
 Find room

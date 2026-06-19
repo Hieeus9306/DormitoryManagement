@@ -1,6 +1,8 @@
-#include "room.hpp"
-#include "config.hpp"
+#include "domain/room.hpp"
+
 #include "libs/algorithms.hpp"
+#include "state/state.hpp"
+
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
