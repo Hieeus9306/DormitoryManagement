@@ -8,4 +8,9 @@ int main() {
     loadServiceInvoices();
 
     return ui::run();
+    
+    saveStudents();
+    saveRooms();
+    saveContracts();
+    saveServiceInvoices();
 }
