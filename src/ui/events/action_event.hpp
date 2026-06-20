@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,7 +18,6 @@ struct StudentActionState {
     bool        updatePriority = false;
     std::string updatePhone;
     std::string updateEmail;
-    std::string removeId;
     std::string message = "Choose an action and fill the required fields.";
 };
 
@@ -67,7 +65,7 @@ struct InvoiceActionState {
 };
 
 struct ActionState {
-    std::vector<std::string> studentActions  = {"Update", "Delete Student"};
+    std::vector<std::string> studentActions  = {"Update"};
     std::vector<std::string> roomActions     = {"Update", "Add", "Delete"};
     std::vector<std::string> contractActions = {
         "Register Room", "Transfer Room", "Check Out Room"};
@@ -83,14 +81,6 @@ struct BusinessActionComponents {
     std::vector<ftxui::Component> sectionMenus;
     ftxui::Component              form;
 };
-
-std::string trim(std::string value);
-bool        parseSize(const std::string& text, size_t& value);
-bool        parseDouble(const std::string& text, double& value);
-bool        parseDate(const std::string& text, base::Date& date);
-std::string nonEmpty(const std::string& value);
-
-void saveAll();
 
 ftxui::Component createTextInput(std::string&       value,
                                  const std::string& placeholder);
