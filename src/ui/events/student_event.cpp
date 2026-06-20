@@ -2,15 +2,9 @@
 
 #include "../Dashboard.hpp"
 #include "../Theme.hpp"
-#include "../table.hpp"
-#include "core/config.hpp"
-#include "domain/contract.hpp"
 #include "domain/student.hpp"
-#include "io/file_io.hpp"
 #include "state/state.hpp"
 
-#include <algorithm>
-#include <cctype>
 #include <memory>
 #include <string>
 #include <vector>
@@ -32,16 +26,6 @@ bool studentExists(const std::string& studentId) {
            studentsList[studentIndex].id == studentId;
 }
 
-bool studentIsStoredInRoom(const std::string& studentId) {
-    for (const auto& room : roomsList) {
-        if (std::find(room.students.begin(), room.students.end(), studentId) !=
-            room.students.end()) {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool canUpdateStudent(const std::string& studentId, const std::string& name,
                       const std::string& studentClass, std::string& message) {
     if (studentId.empty() || name.empty() || studentClass.empty()) {
@@ -50,24 +34,6 @@ bool canUpdateStudent(const std::string& studentId, const std::string& name,
     }
     if (!studentExists(studentId)) {
         message = "Student ID does not exist.";
-        return false;
-    }
-    return true;
-}
-
-bool canDeleteStudent(const std::string& studentId, std::string& message) {
-    if (studentId.empty()) {
-        message = "Student ID is required.";
-        return false;
-    }
-    if (!studentExists(studentId)) {
-        message = "Student ID does not exist.";
-        return false;
-    }
-    if (findActiveContractOfStudent(studentId) != contractsList.size() ||
-        studentIsStoredInRoom(studentId)) {
-        message = "Student is still linked to a room or active contract. "
-                  "Use Contracts / Check Out Room first.";
         return false;
     }
     return true;
@@ -114,7 +80,6 @@ Component studentUpdateForm(std::shared_ptr<ActionState> state) {
 
             updateStudent(studentId, name, studentClass,
                           state->students.updatePriority, phone, email);
-            saveStudents();
             state->students.message =
                 "updateStudent completed for " + studentId + ".";
         },
@@ -131,38 +96,6 @@ Component studentUpdateForm(std::shared_ptr<ActionState> state) {
                               priority->Render(),
                               field("Phone", phone),
                               field("Email", email),
-                              button->Render() | center,
-                          },
-                          state->students.message);
-    });
-}
-
-// ── Form: Delete ──
-
-Component studentRemoveForm(std::shared_ptr<ActionState> state) {
-    auto id     = createTextInput(state->students.removeId, "Student ID");
-    auto button = Button(
-        "Delete Student",
-        [state] {
-            const auto  studentId = nonEmpty(state->students.removeId);
-            std::string message;
-            if (!canDeleteStudent(studentId, message)) {
-                state->students.message = message;
-                return;
-            }
-
-            removeStudent(studentId);
-            saveStudents();
-            state->students.message =
-                "Student deleted successfully: " + studentId + ".";
-        },
-        ButtonOption::Ascii());
-    auto container = Container::Vertical({id, button});
-
-    return Renderer(container, [=] {
-        return titledForm("Students / Delete",
-                          {
-                              field("Student ID", id),
                               button->Render() | center,
                           },
                           state->students.message);
@@ -209,8 +142,7 @@ Component createStudentActionMenu(std::shared_ptr<ActionState> state,
 }
 
 Component createStudentActionForms(std::shared_ptr<ActionState> state) {
-    return Container::Tab({studentUpdateForm(state), studentRemoveForm(state)},
-                          &state->students.action);
+    return Container::Tab({studentUpdateForm(state)}, &state->students.action);
 }
 
 } // namespace ui::events
