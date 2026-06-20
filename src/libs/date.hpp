@@ -57,7 +57,7 @@ class Date {
     }
 
     // I/O Operator
-    constexpr friend std::ostream& operator<<(std::ostream& out,
+    friend std::ostream& operator<<(std::ostream& out,
                                               const Date&   date) {
         out << date.format();
         return out;
