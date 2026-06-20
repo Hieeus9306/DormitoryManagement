@@ -2,17 +2,11 @@
 
 #include "../Dashboard.hpp"
 #include "../Theme.hpp"
-#include "../table.hpp"
-#include "core/config.hpp"
 #include "domain/room.hpp"
-#include "io/file_io.hpp"
 #include "state/state.hpp"
 
-#include <algorithm>
-#include <cctype>
-#include <iomanip>
+#include "libs/string_utils.hpp"
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -178,7 +172,6 @@ Component roomUpdateForm(std::shared_ptr<ActionState> state) {
             }
 
             updateRoom(roomId, roomType, price);
-            saveRooms();
             state->rooms.message = "updateRoom completed for " + roomId + ".";
         },
         ButtonOption::Ascii());
@@ -219,7 +212,6 @@ Component roomAddForm(std::shared_ptr<ActionState> state) {
             }
 
             addRoom(roomId, roomType, price);
-            saveRooms();
             state->rooms.message = "addRoom completed for " + roomId + ".";
         },
         ButtonOption::Ascii());
@@ -253,7 +245,6 @@ Component roomRemoveForm(std::shared_ptr<ActionState> state) {
             }
 
             removeRoom(roomId);
-            saveRooms();
             state->rooms.message = "Room deleted successfully: " + roomId + ".";
         },
         ButtonOption::Ascii());

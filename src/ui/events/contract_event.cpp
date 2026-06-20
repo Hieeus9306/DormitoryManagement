@@ -2,16 +2,12 @@
 
 #include "../Dashboard.hpp"
 #include "../Theme.hpp"
-#include "../table.hpp"
-#include "core/config.hpp"
 #include "domain/contract.hpp"
 #include "domain/room.hpp"
 #include "domain/student.hpp"
-#include "io/file_io.hpp"
 #include "state/state.hpp"
 
-#include <algorithm>
-#include <cctype>
+#include "libs/string_utils.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -185,7 +181,6 @@ Component contractRegisterForm(std::shared_ptr<ActionState> state) {
 
             addStudent(student);
             registerRoom(studentId, roomId, startDate, endDate);
-            saveAll();
             state->contracts.message =
                 "addStudent and registerRoom completed for " + studentId + ".";
         },
@@ -249,8 +244,6 @@ Component contractTransferForm(std::shared_ptr<ActionState> state) {
             }
 
             transferRoom(studentId, roomId, startDate, endDate);
-            saveRooms();
-            saveContracts();
             state->contracts.message =
                 "transferRoom completed for " + studentId + ".";
         },
@@ -289,7 +282,6 @@ Component contractCheckoutForm(std::shared_ptr<ActionState> state) {
 
             checkoutRoom(studentId);
             removeStudent(studentId);
-            saveAll();
             state->contracts.message =
                 "checkoutRoom and removeStudent completed for " + studentId +
                 ".";
@@ -319,19 +311,25 @@ Component createContractDashboard(SearchState& searchState) {
         .totalRecords  = contractsList.size(),
         .filterFn =
             [&searchState](size_t index) {
-                return index < contractsList.size() &&
-                       matchesContract(contractsList[index], searchState);
+                const size_t r = contractsList.size() - 1 - index;
+                return r < contractsList.size() &&
+                       matchesContract(contractsList[r], searchState);
             },
         .renderRowFn = [](size_t index) -> std::vector<Element> {
-            const auto& contract = contractsList[index];
+            const size_t r        = contractsList.size() - 1 - index;
+            const auto&  contract = contractsList[r];
             return {
                 text(contract.id) | color(Color::White),
                 theme::statusBadge(contract.isActive ? "true" : "false",
                                    contract.isActive),
             };
         },
-        .renderDetailFn = &renderContractDetail,
-        .emptyMessage   = "No matching contracts",
+        .renderDetailFn =
+            [](size_t index) {
+                const size_t r = contractsList.size() - 1 - index;
+                return renderContractDetail(r);
+            },
+        .emptyMessage = "No matching contracts",
     });
 }
 

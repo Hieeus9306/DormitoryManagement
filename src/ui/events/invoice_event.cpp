@@ -2,15 +2,11 @@
 
 #include "../Dashboard.hpp"
 #include "../Theme.hpp"
-#include "../table.hpp"
-#include "core/config.hpp"
 #include "domain/invoice.hpp"
 #include "domain/room.hpp"
-#include "io/file_io.hpp"
 #include "state/state.hpp"
 
-#include <algorithm>
-#include <cctype>
+#include "libs/string_utils.hpp"
 #include <iomanip>
 #include <memory>
 #include <sstream>
@@ -187,7 +183,6 @@ Component invoiceCreateForm(std::shared_ptr<ActionState> state) {
             }
 
             createInvoice(roomId, month, year, electricity, water);
-            saveServiceInvoices();
             state->invoices.message =
                 "createInvoice completed for " + roomId + ".";
         },
@@ -226,7 +221,6 @@ Component invoicePaymentForm(std::shared_ptr<ActionState> state) {
             }
 
             updatePaymentStatus(invoiceId, state->invoices.isPaid);
-            saveServiceInvoices();
             state->invoices.message =
                 "updatePaymentStatus completed for " + invoiceId + ".";
         },
@@ -256,18 +250,24 @@ Component createInvoiceDashboard(SearchState& searchState) {
         .totalRecords  = serviceInvoicesList.size(),
         .filterFn =
             [&searchState](size_t index) {
-                return index < serviceInvoicesList.size() &&
-                       matchesInvoice(serviceInvoicesList[index], searchState);
+                const size_t r = serviceInvoicesList.size() - 1 - index;
+                return r < serviceInvoicesList.size() &&
+                       matchesInvoice(serviceInvoicesList[r], searchState);
             },
         .renderRowFn = [](size_t index) -> std::vector<Element> {
-            const auto& inv = serviceInvoicesList[index];
+            const size_t r   = serviceInvoicesList.size() - 1 - index;
+            const auto&  inv = serviceInvoicesList[r];
             return {
                 text(inv.id) | color(Color::White),
                 theme::statusBadge(inv.isPaid ? "true" : "false", inv.isPaid),
             };
         },
-        .renderDetailFn = &renderInvoiceDetail,
-        .emptyMessage   = "No matching invoices",
+        .renderDetailFn =
+            [](size_t index) {
+                const size_t r = serviceInvoicesList.size() - 1 - index;
+                return renderInvoiceDetail(r);
+            },
+        .emptyMessage = "No matching invoices",
     });
 }
 
