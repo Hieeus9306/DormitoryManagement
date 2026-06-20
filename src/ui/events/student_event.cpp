@@ -5,6 +5,7 @@
 #include "domain/student.hpp"
 #include "state/state.hpp"
 
+#include "libs/string_utils.hpp"
 #include <memory>
 #include <string>
 #include <vector>
