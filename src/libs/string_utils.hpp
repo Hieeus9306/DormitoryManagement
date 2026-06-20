@@ -3,6 +3,8 @@
 #include "libs/date.hpp"
 #include <algorithm>
 #include <cctype>
+#include <iomanip>
+#include <sstream>
 #include <string>
 
 // convert string into lower case
@@ -73,4 +75,11 @@ inline bool parseDate(const std::string& text, base::Date& date) {
 
 // Normalize string input obligately before checking and processing
 inline std::string nonEmpty(const std::string& value) { return trim(value); }
+
+// string format of number
+inline std::string fmtNum(double value, int precision = 2) {
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(precision) << value;
+    return out.str();
+}
 
