@@ -2,22 +2,12 @@
 
 #include "../Theme.hpp"
 
-#include <algorithm>
-#include <cctype>
+#include "libs/string_utils.hpp"
 
 #include <ftxui/component/component_options.hpp>
 
 namespace ui::events {
 namespace {
-
-// Chuyen chuoi ve chu thuong de so khop tim kiem khong phan biet hoa thuong.
-std::string toLower(std::string value) {
-    std::transform(value.begin(), value.end(), value.begin(),
-                   [](unsigned char character) {
-                       return static_cast<char>(std::tolower(character));
-                   });
-    return value;
-}
 
 } // namespace
 

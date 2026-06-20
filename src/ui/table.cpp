@@ -2,8 +2,7 @@
 
 #include "Theme.hpp"
 
-#include <algorithm>
-#include <cctype>
+#include "libs/string_utils.hpp"
 #include <string>
 #include <vector>
 
@@ -13,13 +12,6 @@ namespace ui {
 namespace {
 
 using namespace ftxui;
-
-std::string toLower(std::string value) {
-    std::transform(
-        value.begin(), value.end(), value.begin(),
-        [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-    return value;
-}
 
 Element renderTableRow(const std::vector<std::string>& cells,
                        bool isHeader = false, size_t rowIndex = 0) {

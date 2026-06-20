@@ -4,23 +4,15 @@
 #include "domain/report.hpp"
 #include "state/state.hpp"
 
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include <vector>
 
+#include "libs/string_utils.hpp"
 #include <ftxui/dom/elements.hpp>
 
 namespace ui::events {
 namespace {
 
 using namespace ftxui;
-
-std::string fmtNum(double value, int precision = 2) {
-    std::ostringstream out;
-    out << std::fixed << std::setprecision(precision) << value;
-    return out.str();
-}
 
 // ── Overdue invoices ──
 
