@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <iostream>
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
@@ -84,6 +85,10 @@ Students I/O
 void loadStudents() {
     std::ifstream fin{std::string(STUDENTS_FILES)};
 
+    if(!fin.is_open()) {
+        throw std::runtime_error("Fail to open students file");
+    }
+
     std::string line;
     while (std::getline(fin, line)) {
         if (trimField(line).empty()) {
@@ -112,6 +117,11 @@ void loadStudents() {
 
 void saveStudents() {
     std::ofstream fout{std::string(STUDENTS_FILES)};
+    
+    if(!fout.is_open()) {
+        std::cout << "Fail to save students data\n";
+        return;
+    }
 
     bool isFirstline = true;
     for (const auto& student : studentsList) {
@@ -137,6 +147,10 @@ Rooms I/O
 */
 void loadRooms() {
     std::ifstream fin{std::string(ROOMS_FILE)};
+
+    if(!fin.is_open()) {
+        throw std::runtime_error("Fail to open rooms file");
+    }
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -185,6 +199,11 @@ void loadRooms() {
 void saveRooms() {
     std::ofstream fout{std::string(ROOMS_FILE)};
 
+    if(!fout.is_open()) {
+        std::cout << "Fail to save rooms data\n";
+        return;
+    }
+
     bool isFirstline = true;
     for (const auto& room : roomsList) {
         if (isFirstline) {
@@ -217,6 +236,10 @@ Contracts I/O
 */
 void loadContracts() {
     std::ifstream fin{std::string(CONTRACTS_FILE)};
+
+    if(!fin.is_open()) {
+        throw std::runtime_error("Fail to open contracts file");
+    }
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -251,6 +274,11 @@ void loadContracts() {
 void saveContracts() {
     std::ofstream fout{std::string(CONTRACTS_FILE)};
 
+    if(!fout.is_open()) {
+        std::cout << "Fail to save contracts data\n";
+        return;
+    }
+
     bool isFirstline = true;
     for (const auto& contract : contractsList) {
         if (isFirstline) {
@@ -276,6 +304,10 @@ Service Invoices I/O
 */
 void loadServiceInvoices() {
     std::ifstream fin{std::string(BILLS_FILE)};
+
+    if(!fin.is_open()) {
+        throw std::runtime_error("Fail to open service invoices file");
+    }
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -327,6 +359,11 @@ void loadServiceInvoices() {
 void saveServiceInvoices() {
     std::ofstream fout{std::string(BILLS_FILE)};
 
+    if(!fout.is_open()) {
+        std::cout << "Fail to save service invoices data\n";
+        return;
+    }
+    
     bool isFirstline = true;
     for (const auto& invoice : serviceInvoicesList) {
         if (isFirstline) {
