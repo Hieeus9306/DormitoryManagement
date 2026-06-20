@@ -1,5 +1,6 @@
 #include "common_events.hpp"
 
+#include "../Theme.hpp"
 #include "contract_event.hpp"
 #include "invoice_event.hpp"
 #include "report_event.hpp"
