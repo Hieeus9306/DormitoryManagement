@@ -8,10 +8,8 @@
 #include "room_event.hpp"
 #include "student_event.hpp"
 
-#include <algorithm>
-#include <cctype>
+#include "libs/string_utils.hpp"
 #include <memory>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -20,74 +18,6 @@
 namespace ui::events {
 
 using namespace ftxui;
-
-// Xóa khoảng trắng thừa ở đầu và cuối chuỗi nhập từ form.
-std::string trim(std::string value) {
-    auto isSpace = [](unsigned char ch) { return std::isspace(ch) != 0; };
-    value.erase(value.begin(),
-                std::find_if(value.begin(), value.end(),
-                             [&](unsigned char ch) { return !isSpace(ch); }));
-    value.erase(std::find_if(value.rbegin(), value.rend(),
-                             [&](unsigned char ch) { return !isSpace(ch); })
-                    .base(),
-                value.end());
-    return value;
-}
-
-// Chuyển chuỗi sang số nguyên không dấu, trả về false nếu dữ liệu không hợp lệ.
-bool parseSize(const std::string& text, size_t& value) {
-    try {
-        std::string input = trim(text);
-        if (input.empty()) {
-            return false;
-        }
-        size_t pos = 0;
-        value      = static_cast<size_t>(std::stoull(input, &pos));
-        return pos == input.size();
-    } catch (const std::exception&) {
-        return false;
-    }
-}
-
-// Chuyển chuỗi sang số thực, trả về false nếu dữ liệu không hợp lệ.
-bool parseDouble(const std::string& text, double& value) {
-    try {
-        std::string input = trim(text);
-        if (input.empty()) {
-            return false;
-        }
-        size_t pos = 0;
-        value      = std::stod(input, &pos);
-        return pos == input.size();
-    } catch (const std::exception&) {
-        return false;
-    }
-}
-
-// Chuyển chuỗi ngày dạng DD/MM/YYYY thành base::Date và kiểm tra ngày hợp lệ.
-bool parseDate(const std::string& text, base::Date& date) {
-    try {
-        std::string input = trim(text);
-        if (input.size() != 10) {
-            return false;
-        }
-        date = base::Date(input);
-        return date.isValid();
-    } catch (const std::exception&) {
-        return false;
-    }
-}
-
-// Chuẩn hóa input bắt buộc bằng cách trim trước khi kiểm tra hoặc lưu.
-std::string nonEmpty(const std::string& value) { return trim(value); }
-
-// Lưu lại toàn bộ dữ liệu sau các action ảnh hưởng nhiều nhóm dữ liệu.
-void saveAll() {
-    saveStudents();
-    saveRooms();
-    saveContracts();
-    saveServiceInvoices();
-}
 
 // Tạo input một dòng dùng chung cho các form nghiệp vụ.
 Component createTextInput(std::string& value, const std::string& placeholder) {
