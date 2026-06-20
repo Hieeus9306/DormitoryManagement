@@ -4,10 +4,8 @@
 #include "search_event.hpp"
 
 #include <memory>
-#include <string>
 
 #include <ftxui/component/component.hpp>
-#include <ftxui/dom/elements.hpp>
 
 namespace ui::events {
 

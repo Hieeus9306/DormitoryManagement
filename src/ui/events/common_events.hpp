@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Theme.hpp"
 #include "search_event.hpp"
 
 #include <string>
@@ -8,7 +7,6 @@
 
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/dom/elements.hpp>
 
 namespace ui::events {
 
