@@ -7,10 +7,12 @@ int main() {
     loadContracts();
     loadServiceInvoices();
 
-    return ui::run();
-    
+    int result = ui::run();
+
     saveStudents();
     saveRooms();
     saveContracts();
     saveServiceInvoices();
+
+    return result;
 }
