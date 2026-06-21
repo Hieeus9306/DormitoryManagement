@@ -25,17 +25,24 @@ struct DashboardState {
     bool   showDetail     = false;
 };
 
+/// Returns the current total number of records — dynamic callback when
+/// available, otherwise the static value.
+size_t getTotalRecords(const DashboardConfig& config) {
+    return config.totalFn ? config.totalFn() : config.totalRecords;
+}
+
 /// Builds a list of visible (filtered) record indices.
 std::vector<size_t> buildVisibleIndices(const DashboardConfig& config) {
+    const size_t total = getTotalRecords(config);
     std::vector<size_t> visible;
     if (!config.filterFn) {
-        visible.reserve(config.totalRecords);
-        for (size_t i = 0; i < config.totalRecords; ++i) {
+        visible.reserve(total);
+        for (size_t i = 0; i < total; ++i) {
             visible.push_back(i);
         }
         return visible;
     }
-    for (size_t i = 0; i < config.totalRecords; ++i) {
+    for (size_t i = 0; i < total; ++i) {
         if (config.filterFn(i)) {
             visible.push_back(i);
         }
@@ -128,7 +135,7 @@ Component createDashboard(DashboardConfig config) {
     auto component = Renderer(container, [=, config = std::move(config)] {
         // ── Detail view ──
         if (state->showDetail && config.renderDetailFn &&
-            state->selectedRecord < config.totalRecords) {
+            state->selectedRecord < getTotalRecords(config)) {
             return vbox(Elements{
                        config.renderDetailFn(state->selectedRecord),
                        theme::spacer(1),

@@ -24,8 +24,11 @@ struct DashboardConfig {
     bool hasDetailView = false;
 
     /// Total number of records in the underlying data set.
-    /// The dashboard iterates indices [0, totalRecords).
-    size_t totalRecords = 0;
+    /// If totalFn is set, it is called each frame to get the current count;
+    /// otherwise totalRecords is used. The dashboard iterates indices
+    /// [0, count).
+    size_t                   totalRecords = 0;
+    std::function<size_t()>  totalFn;
 
     /// Returns true if the record at @p index passes the current search filter.
     /// Called for indices in [0, totalRecords).

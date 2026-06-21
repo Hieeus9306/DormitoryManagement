@@ -308,7 +308,7 @@ Component createContractDashboard(SearchState& searchState) {
         .headers = {"Id", "Status"},
         // .pageSize = 0;  // auto-calculate from terminal height
         .hasDetailView = true,
-        .totalRecords  = contractsList.size(),
+        .totalFn       = [&]() { return contractsList.size(); },
         .filterFn =
             [&searchState](size_t index) {
                 const size_t r = contractsList.size() - 1 - index;

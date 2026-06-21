@@ -247,7 +247,7 @@ Component createInvoiceDashboard(SearchState& searchState) {
         .headers = {"Id", "Status"},
         // .pageSize = 0;  // auto-calculate from terminal height
         .hasDetailView = true,
-        .totalRecords  = serviceInvoicesList.size(),
+        .totalFn       = [&]() { return serviceInvoicesList.size(); },
         .filterFn =
             [&searchState](size_t index) {
                 const size_t r = serviceInvoicesList.size() - 1 - index;

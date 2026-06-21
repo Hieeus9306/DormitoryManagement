@@ -269,7 +269,7 @@ Component createRoomDashboard(SearchState& searchState) {
         .headers = {"Id", "Current / Capacity"},
         // .pageSize = 0;  // auto-calculate from terminal height
         .hasDetailView = true,
-        .totalRecords  = roomsList.size(),
+        .totalFn       = [&]() { return roomsList.size(); },
         .filterFn =
             [&searchState](size_t index) {
                 return index < roomsList.size() &&

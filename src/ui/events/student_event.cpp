@@ -113,7 +113,7 @@ Component createStudentDashboard(SearchState& searchState) {
                     "Phone", "Email"},
         // .pageSize = 0;  // auto-calculate from terminal height
         .hasDetailView = false,
-        .totalRecords  = studentsList.size(),
+        .totalFn       = [&]() { return studentsList.size(); },
         .filterFn =
             [&searchState](size_t index) {
                 return index < studentsList.size() &&
