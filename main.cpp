@@ -1,5 +1,6 @@
 #include "io/file_io.hpp"
 #include "ui/ui.hpp"
+#include <iostream>
 
 int main() {
     loadStudents();
@@ -13,6 +14,8 @@ int main() {
     saveRooms();
     saveContracts();
     saveServiceInvoices();
+
+    std::cout << "Program closed successfully.";
 
     return result;
 }
