@@ -68,7 +68,7 @@ Element field(const std::string& label, const Component& input) {
     return hbox({
                theme::pillLabel(label) | size(WIDTH, EQUAL, 20),
                text(" ") | size(WIDTH, EQUAL, 1),
-               input->Render() | flex | bgcolor(theme::panel),
+               input->Render() | xflex | bgcolor(theme::panel),
            }) |
            size(HEIGHT, EQUAL, 3);
 }

@@ -102,6 +102,24 @@ bool canCheckoutContract(const std::string& studentId, std::string& message) {
 
 // ── Search ──
 
+// Register Room has nine inputs, so use compact one-line fields to keep every
+// field visible on a standard terminal screen.
+Component createCompactTextInput(std::string& value,
+                                 const std::string& placeholder) {
+    auto option      = InputOption::Default();
+    option.multiline = false;
+    return Input(&value, placeholder, option);
+}
+
+Element compactField(const std::string& label, const Component& input) {
+    return hbox({
+               theme::pillLabel(label) | size(WIDTH, EQUAL, 20),
+               text(" ") | size(WIDTH, EQUAL, 1),
+               input->Render() | xflex | bgcolor(theme::panel),
+           }) |
+           size(HEIGHT, EQUAL, 1);
+}
+
 bool matchesContract(const Contract& contract, const SearchState& searchState) {
     const std::string keyword = searchKeyword(searchState, kContractSection);
     switch (selectedSearchField(searchState, kContractSection)) {
@@ -134,17 +152,23 @@ Element renderContractDetail(size_t index) {
 
 Component contractRegisterForm(std::shared_ptr<ActionState> state) {
     auto studentId =
-        createTextInput(state->contracts.registerStudentId, "Student ID");
-    auto name = createTextInput(state->contracts.registerName, "Full name");
-    auto cls  = createTextInput(state->contracts.registerClass, "Major/Class");
+        createCompactTextInput(state->contracts.registerStudentId, "Student ID");
+    auto name =
+        createCompactTextInput(state->contracts.registerName, "Full name");
+    auto cls =
+        createCompactTextInput(state->contracts.registerClass, "Major/Class");
     auto priority =
         Checkbox("Priority (true/false)", &state->contracts.registerPriority);
-    auto phone  = createTextInput(state->contracts.registerPhone, "Phone");
-    auto email  = createTextInput(state->contracts.registerEmail, "Email");
-    auto roomId = createTextInput(state->contracts.registerRoomId, "Room ID");
-    auto start =
-        createTextInput(state->contracts.registerStartDate, "DD/MM/YYYY");
-    auto end = createTextInput(state->contracts.registerEndDate, "DD/MM/YYYY");
+    auto phone =
+        createCompactTextInput(state->contracts.registerPhone, "Phone");
+    auto email =
+        createCompactTextInput(state->contracts.registerEmail, "Email");
+    auto roomId =
+        createCompactTextInput(state->contracts.registerRoomId, "Room ID");
+    auto start = createCompactTextInput(state->contracts.registerStartDate,
+                                        "DD/MM/YYYY");
+    auto end = createCompactTextInput(state->contracts.registerEndDate,
+                                      "DD/MM/YYYY");
     auto button = Button(
         "registerRoom + addStudent",
         [state] {
@@ -192,17 +216,17 @@ Component contractRegisterForm(std::shared_ptr<ActionState> state) {
         return titledForm("Contracts / Register Room",
                           {
                               text("Student information") | bold,
-                              field("Student ID", studentId),
-                              field("Full name", name),
-                              field("Major/Class", cls),
+                              compactField("Student ID", studentId),
+                              compactField("Full name", name),
+                              compactField("Major/Class", cls),
                               priority->Render(),
-                              field("Phone", phone),
-                              field("Email", email),
+                              compactField("Phone", phone),
+                              compactField("Email", email),
                               separator(),
                               text("Contract information") | bold,
-                              field("Room ID", roomId),
-                              field("Start date", start),
-                              field("End date", end),
+                              compactField("Room ID", roomId),
+                              compactField("Start date", start),
+                              compactField("End date", end),
                               button->Render() | center,
                           },
                           state->contracts.message);

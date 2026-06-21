@@ -37,7 +37,9 @@ ftxui::Component createNavigationButton(std::string label, int index,
             row = row | color(theme::mutedText);
         }
 
-        return row | size(HEIGHT, EQUAL, 3);
+        // Keep the sidebar compact enough to show every action in sections
+        // such as Rooms and Contracts.
+        return row | size(HEIGHT, EQUAL, 2);
     };
 
     return Button(
