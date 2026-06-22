@@ -1,6 +1,7 @@
 #include "domain/contract.hpp"
 
 #include "domain/room.hpp"
+#include "io/file_io.hpp"
 #include "libs/algorithms.hpp"
 #include "state/state.hpp"
 
@@ -84,6 +85,7 @@ void addContract(const std::string& studentId, const std::string& roomId,
     newContract.isActive  = true;
 
     contractsList.push_back(newContract);
+    saveContracts();
 }
 
 void removeContract(const std::string& contractId) {
@@ -97,6 +99,7 @@ void removeContract(const std::string& contractId) {
     }
 
     contractsList.erase_at(idx);
+    saveContracts();
 }
 
 void extendContract(const std::string& contractId,
@@ -114,6 +117,7 @@ void extendContract(const std::string& contractId,
     }
 
     contractsList[idx].endDate = newEndDate;
+    saveContracts();
 }
 
 void terminateContract(const std::string& contractId) {
@@ -127,6 +131,7 @@ void terminateContract(const std::string& contractId) {
     }
 
     contractsList[idx].isActive = false;
+    saveContracts();
 }
 
 /*

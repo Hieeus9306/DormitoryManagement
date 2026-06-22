@@ -1,6 +1,7 @@
 #include "domain/invoice.hpp"
 
 #include "core/config.hpp"
+#include "io/file_io.hpp"
 #include "libs/algorithms.hpp"
 #include "state/state.hpp"
 
@@ -140,6 +141,7 @@ void createInvoice(const std::string& roomId, size_t month, size_t year,
     newInvoice.isPaid = false;
 
     serviceInvoicesList.push_back(newInvoice);
+    saveServiceInvoices();
 }
 
 void updatePaymentStatus(const std::string& invoiceId, const bool& status) {
@@ -149,4 +151,5 @@ void updatePaymentStatus(const std::string& invoiceId, const bool& status) {
         return;
     }
     serviceInvoicesList[idx].isPaid = status;
+    saveServiceInvoices();
 }

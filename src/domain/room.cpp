@@ -1,5 +1,6 @@
 #include "domain/room.hpp"
 
+#include "io/file_io.hpp"
 #include "libs/algorithms.hpp"
 #include "state/state.hpp"
 
@@ -45,6 +46,7 @@ void addRoom(const std::string& roomId, size_t roomType, double roomPrice) {
     newRoom.price = roomPrice;
 
     roomsList.insert(idx, newRoom);
+    saveRooms();
 }
 
 void removeRoom(const std::string& roomId) {
@@ -61,6 +63,7 @@ void removeRoom(const std::string& roomId) {
     }
 
     roomsList.erase_at(idx);
+    saveRooms();
 }
 
 void updateRoom(const std::string& roomId, size_t newType, double newPrice) {
@@ -81,6 +84,7 @@ void updateRoom(const std::string& roomId, size_t newType, double newPrice) {
 
     roomsList[idx].type  = newType;
     roomsList[idx].price = newPrice;
+    saveRooms();
 }
 
 void addStudentToRoom(const std::string& roomId, const std::string& studentId) {
@@ -100,6 +104,7 @@ void addStudentToRoom(const std::string& roomId, const std::string& studentId) {
     }
 
     room.students.insert(studentIdx, studentId);
+    saveRooms();
 }
 
 void removeStudentFromRoom(const std::string& roomId,
@@ -117,4 +122,5 @@ void removeStudentFromRoom(const std::string& roomId,
     }
 
     room.students.erase_at(studentIdx);
+    saveRooms();
 }

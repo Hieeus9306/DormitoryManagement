@@ -1,5 +1,6 @@
 #include "domain/student.hpp"
 
+#include "io/file_io.hpp"
 #include "libs/algorithms.hpp"
 #include "state/state.hpp"
 
@@ -30,6 +31,7 @@ void addStudent(const Student& newStudent) {
     }
 
     studentsList.insert(idx, newStudent);
+    saveStudents();
 }
 
 void removeStudent(const std::string& studentId) {
@@ -40,6 +42,7 @@ void removeStudent(const std::string& studentId) {
     }
 
     studentsList.erase_at(idx);
+    saveStudents();
 }
 
 void updateStudent(const std::string& studentId, std::string newName,
@@ -57,4 +60,5 @@ void updateStudent(const std::string& studentId, std::string newName,
     student.isPriority   = newIsPriority;
     student.phone        = newPhone;
     student.email        = newEmail;
+    saveStudents();
 }
