@@ -10,11 +10,6 @@ int main() {
 
     int result = ui::run();
 
-    saveStudents();
-    saveRooms();
-    saveContracts();
-    saveServiceInvoices();
-
     std::cout << "Program closed successfully.";
 
     return result;
