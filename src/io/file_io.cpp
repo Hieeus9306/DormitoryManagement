@@ -3,8 +3,7 @@
 #include "core/config.hpp"
 #include "state/state.hpp"
 
-#include <algorithm>
-#include <cctype>
+#include "libs/string_utils.hpp"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -28,55 +27,6 @@ base::Vector<std::string> parseRecord(std::string& line) {
     return record;
 }
 
-std::string trimField(std::string value) {
-    auto isSpace = [](unsigned char character) {
-        return std::isspace(character) != 0;
-    };
-
-    value.erase(value.begin(), std::find_if(value.begin(), value.end(),
-                                            [&](unsigned char character) {
-                                                return !isSpace(character);
-                                            }));
-    value.erase(std::find_if(value.rbegin(), value.rend(),
-                             [&](unsigned char character) {
-                                 return !isSpace(character);
-                             })
-                    .base(),
-                value.end());
-
-    return value;
-}
-
-bool parseSizeField(const std::string& text, size_t& value) {
-    try {
-        std::string input = trimField(text);
-        if (input.empty()) {
-            return false;
-        }
-
-        size_t parsed = 0;
-        value         = static_cast<size_t>(std::stoull(input, &parsed));
-        return parsed == input.size();
-    } catch (const std::exception&) {
-        return false;
-    }
-}
-
-bool parseDoubleField(const std::string& text, double& value) {
-    try {
-        std::string input = trimField(text);
-        if (input.empty()) {
-            return false;
-        }
-
-        size_t parsed = 0;
-        value         = std::stod(input, &parsed);
-        return parsed == input.size();
-    } catch (const std::exception&) {
-        return false;
-    }
-}
-
 /*
 ────────────────────────────────────────────────────────────────────────────────
 Students I/O
@@ -91,7 +41,7 @@ void loadStudents() {
 
     std::string line;
     while (std::getline(fin, line)) {
-        if (trimField(line).empty()) {
+        if (trim(line).empty()) {
             continue;
         }
 
@@ -102,12 +52,12 @@ void loadStudents() {
 
         Student student;
 
-        student.id           = trimField(record[0]);
-        student.name         = trimField(record[1]);
-        student.studentClass = trimField(record[2]);
-        student.isPriority   = (trimField(record[3]) == "true");
-        student.phone        = trimField(record[4]);
-        student.email        = trimField(record[5]);
+        student.id           = trim(record[0]);
+        student.name         = trim(record[1]);
+        student.studentClass = trim(record[2]);
+        student.isPriority   = (trim(record[3]) == "true");
+        student.phone        = trim(record[4]);
+        student.email        = trim(record[5]);
 
         studentsList.push_back(student);
     }
@@ -131,9 +81,12 @@ void saveStudents() {
             fout << "\n";
         }
 
-        fout << student.id << "," << student.name << "," << student.studentClass
-             << "," << (student.isPriority ? "true" : "false") << ","
-             << student.phone << "," << student.email;
+        fout << student.id << ","
+             << student.name << ","
+             << student.studentClass << "," 
+             << (student.isPriority ? "true" : "false") << ","
+             << student.phone << "," 
+             << student.email;
     }
 
     fout.flush();
@@ -154,7 +107,7 @@ void loadRooms() {
 
     std::string line;
     while (std::getline(fin, line)) {
-        if (trimField(line).empty()) {
+        if (trim(line).empty()) {
             continue;
         }
 
@@ -165,26 +118,26 @@ void loadRooms() {
 
         size_t roomType  = 0;
         double roomPrice = 0;
-        if (!parseSizeField(record[1], roomType) ||
-            !parseDoubleField(record[2], roomPrice)) {
+        if (!parseSize(record[1], roomType) ||
+            !parseDouble(record[2], roomPrice)) {
             continue;
         }
 
-        record[3] = trimField(record[3]);
+        record[3] = trim(record[3]);
         if (record[3] == "empty") {
             record[3].clear();
         }
 
         Room room;
 
-        room.id    = trimField(record[0]);
+        room.id    = trim(record[0]);
         room.type  = roomType;
         room.price = roomPrice;
 
         std::stringstream ss(record[3]);
         std::string       token;
         while (std::getline(ss, token, '|')) {
-            token = trimField(token);
+            token = trim(token);
             if (!token.empty()) {
                 room.students.push_back(token);
             }
@@ -212,7 +165,9 @@ void saveRooms() {
             fout << "\n";
         }
 
-        fout << room.id << "," << room.type << "," << room.price << ",";
+        fout << room.id << "," 
+             << room.type << "," 
+             << room.price << ",";
         if (room.students.empty()) {
             fout << "empty";
         } else {
@@ -243,7 +198,7 @@ void loadContracts() {
 
     std::string line;
     while (std::getline(fin, line)) {
-        if (trimField(line).empty()) {
+        if (trim(line).empty()) {
             continue;
         }
 
@@ -255,12 +210,12 @@ void loadContracts() {
         Contract contract;
 
         try {
-            contract.id        = trimField(record[0]);
-            contract.studentId = trimField(record[1]);
-            contract.roomId    = trimField(record[2]);
-            contract.startDate = base::Date(trimField(record[3]));
-            contract.endDate   = base::Date(trimField(record[4]));
-            contract.isActive  = (trimField(record[5]) == "true");
+            contract.id        = trim(record[0]);
+            contract.studentId = trim(record[1]);
+            contract.roomId    = trim(record[2]);
+            contract.startDate = base::Date(trim(record[3]));
+            contract.endDate   = base::Date(trim(record[4]));
+            contract.isActive  = (trim(record[5]) == "true");
         } catch (const std::exception&) {
             continue;
         }
@@ -287,8 +242,10 @@ void saveContracts() {
             fout << "\n";
         }
 
-        fout << contract.id << "," << contract.studentId << ","
-             << contract.roomId << "," << contract.startDate << ","
+        fout << contract.id << "," 
+             << contract.studentId << ","
+             << contract.roomId << "," 
+             << contract.startDate << ","
              << contract.endDate << ","
              << (contract.isActive ? "true" : "false");
     }
@@ -311,7 +268,7 @@ void loadServiceInvoices() {
 
     std::string line;
     while (std::getline(fin, line)) {
-        if (trimField(line).empty()) {
+        if (trim(line).empty()) {
             continue;
         }
 
@@ -327,20 +284,20 @@ void loadServiceInvoices() {
         double oldWaterIndex       = 0;
         double newWaterIndex       = 0;
         double totalAmount         = 0;
-        if (!parseSizeField(record[2], month) ||
-            !parseSizeField(record[3], year) ||
-            !parseDoubleField(record[4], oldElectricityIndex) ||
-            !parseDoubleField(record[5], newElectricityIndex) ||
-            !parseDoubleField(record[6], oldWaterIndex) ||
-            !parseDoubleField(record[7], newWaterIndex) ||
-            !parseDoubleField(record[8], totalAmount)) {
+        if (!parseSize(record[2], month) ||
+            !parseSize(record[3], year) ||
+            !parseDouble(record[4], oldElectricityIndex) ||
+            !parseDouble(record[5], newElectricityIndex) ||
+            !parseDouble(record[6], oldWaterIndex) ||
+            !parseDouble(record[7], newWaterIndex) ||
+            !parseDouble(record[8], totalAmount)) {
             continue;
         }
 
         ServiceInvoice invoice;
 
-        invoice.id                  = trimField(record[0]);
-        invoice.roomId              = trimField(record[1]);
+        invoice.id                  = trim(record[0]);
+        invoice.roomId              = trim(record[1]);
         invoice.month               = month;
         invoice.year                = year;
         invoice.oldElectricityIndex = oldElectricityIndex;
@@ -348,7 +305,7 @@ void loadServiceInvoices() {
         invoice.oldWaterIndex       = oldWaterIndex;
         invoice.newWaterIndex       = newWaterIndex;
         invoice.totalAmount         = totalAmount;
-        invoice.isPaid              = (trimField(record[9]) == "true");
+        invoice.isPaid              = (trim(record[9]) == "true");
 
         serviceInvoicesList.push_back(invoice);
     }
@@ -372,11 +329,16 @@ void saveServiceInvoices() {
             fout << "\n";
         }
 
-        fout << invoice.id << "," << invoice.roomId << "," << invoice.month
-             << "," << invoice.year << "," << invoice.oldElectricityIndex << ","
-             << invoice.newElectricityIndex << "," << invoice.oldWaterIndex
-             << "," << invoice.newWaterIndex << "," << invoice.totalAmount
-             << "," << (invoice.isPaid ? "true" : "false");
+        fout << invoice.id << "," 
+             << invoice.roomId << "," 
+             << invoice.month << "," 
+             << invoice.year << "," 
+             << invoice.oldElectricityIndex << ","
+             << invoice.newElectricityIndex << "," 
+             << invoice.oldWaterIndex << "," 
+             << invoice.newWaterIndex << "," 
+             << invoice.totalAmount << "," 
+             << (invoice.isPaid ? "true" : "false");
     }
 
     fout.flush();

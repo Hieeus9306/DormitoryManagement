@@ -9,9 +9,6 @@ Parsing helpers
 ────────────────────────────────────────────────────────────────────────────────
 */
 base::Vector<std::string> parseRecord(std::string& line);
-std::string               trimField(std::string value);
-bool parseSizeField(const std::string& text, size_t& value);
-bool parseDoubleField(const std::string& text, double& value);
 
 /*
 ────────────────────────────────────────────────────────────────────────────────
